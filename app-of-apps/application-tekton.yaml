@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chatbot-jan142026-1-app-tekton
+  namespace: openshift-gitops
+  finalizers: ["resources-finalizer.argocd.argoproj.io"]
+spec:
+  project: default
+  source:
+    path: ./components/chatbot-jan142026-1/overlays/tekton
+    repoURL: https://github.com/redhat-appstudio-mjf/chatbot-jan142026-1-gitops.git
+    targetRevision: main
+  destination:
+    namespace: chatbot-jan142026-1
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        argocd.argoproj.io/managed-by: openshift-gitops
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
